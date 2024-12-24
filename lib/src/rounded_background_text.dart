@@ -35,6 +35,7 @@ class RoundedBackgroundText extends StatelessWidget {
     this.backgroundColor,
     this.textWidthBasis,
     this.ellipsis,
+    this.indicatorColor,
     this.locale,
     this.strutStyle,
     this.textScaler = TextScaler.noScaling,
@@ -42,7 +43,8 @@ class RoundedBackgroundText extends StatelessWidget {
     this.textHeightBehavior,
     this.innerRadius = kDefaultInnerRadius,
     this.outerRadius = kDefaultOuterRadius,
-  }) : text = TextSpan(text: text, style: style);
+  }) : text = TextSpan(
+            text: indicatorColor != null ? "   $text" : text, style: style);
 
   /// Creates a rounded background text based on an [InlineSpan], that can have
   /// multiple styles
@@ -51,6 +53,7 @@ class RoundedBackgroundText extends StatelessWidget {
     required this.text,
     this.textDirection,
     this.backgroundColor,
+    this.indicatorColor,
     this.textAlign,
     this.textWidthBasis,
     this.ellipsis,
@@ -79,6 +82,7 @@ class RoundedBackgroundText extends StatelessWidget {
     TextStyle? style,
     TextDirection? textDirection,
     Color? backgroundColor,
+    Color? indicatorColor,
     TextAlign textAlign = TextAlign.start,
     TextWidthBasis? textWidthBasis,
     TextScaler textScaler = TextScaler.noScaling,
@@ -131,6 +135,7 @@ class RoundedBackgroundText extends StatelessWidget {
     TextSelectionControls? selectionControls,
     TextDirection? textDirection,
     Color? backgroundColor,
+    Color? indicatorColor,
     TextAlign textAlign = TextAlign.start,
     TextWidthBasis? textWidthBasis,
     TextScaler textScaler = TextScaler.noScaling,
@@ -154,6 +159,7 @@ class RoundedBackgroundText extends StatelessWidget {
         innerRadius: innerRadius,
         outerRadius: outerRadius,
         backgroundColor: backgroundColor,
+        indicatorColor: indicatorColor,
         textWidthBasis: textWidthBasis,
       ),
       SelectableText.rich(
@@ -189,6 +195,7 @@ class RoundedBackgroundText extends StatelessWidget {
   /// If null, a trasparent color will be used.
   /// {@endtemplate}
   final Color? backgroundColor;
+  final Color? indicatorColor;
 
   /// How the text should be aligned horizontally.
   final TextAlign? textAlign;
@@ -287,6 +294,7 @@ class RoundedBackgroundText extends StatelessWidget {
         ),
         painter: RoundedBackgroundTextPainter(
           backgroundColor: backgroundColor ?? Colors.transparent,
+          indicatorColor: indicatorColor,
           text: painter,
           innerRadius: innerRadius,
           outerRadius: outerRadius,
@@ -298,6 +306,7 @@ class RoundedBackgroundText extends StatelessWidget {
 
 class RoundedBackgroundTextPainter extends CustomPainter {
   final Color backgroundColor;
+  final Color? indicatorColor;
   final TextPainter text;
 
   final double innerRadius;
@@ -306,6 +315,7 @@ class RoundedBackgroundTextPainter extends CustomPainter {
   const RoundedBackgroundTextPainter({
     required this.backgroundColor,
     required this.text,
+    this.indicatorColor,
     required this.innerRadius,
     required this.outerRadius,
   });
@@ -351,6 +361,13 @@ class RoundedBackgroundTextPainter extends CustomPainter {
     }
 
     text.paint(canvas, Offset.zero);
+
+    if (indicatorColor != null) {
+      final paint = Paint()..color = indicatorColor!;
+      final radius = 4.0;
+      canvas.drawCircle(
+          Offset(lineInfos[0][0].x + radius + 3, 7.0), radius, paint);
+    }
   }
 
   void paintBackground(Canvas canvas, List<LineMetricsHelper> lineInfo) {
